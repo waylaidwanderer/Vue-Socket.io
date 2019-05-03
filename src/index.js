@@ -5,7 +5,6 @@ import Emitter from './emitter';
 import SocketIO from 'socket.io-client';
 
 export default class VueSocketIO {
-
     /**
      * lets take all resource
      * @param io
@@ -14,14 +13,13 @@ export default class VueSocketIO {
      * @param options
      */
     constructor({connection, vuex, debug, options}){
-
         Logger.debug = debug;
         this.io = this.connect(connection, options);
         this.emitter = new Emitter(vuex);
         this.listener = new Listener(this.io, this.emitter);
+        this.namespace = null;
         this.useConnectionNamespace = (options && options.useConnectionNamespace) || false;
         this.connectionNamespace = (options && options.connectionNamespace) || null;
-
     }
 
     /**
@@ -29,14 +27,16 @@ export default class VueSocketIO {
      * @param Vue
      */
     install(Vue){
-
         if (this.useConnectionNamespace) {
             const namespace = this.connectionNamespace || this.io.nsp.replace('/', '');
             this.namespace = namespace;
-            console.log(namespace, Vue.prototype.$socket);
             if (typeof Vue.prototype.$socket === 'object') {
                 Vue.prototype.$socket[namespace] = this.io;
                 Vue.prototype.$vueSocketIo[namespace] = this;
+                Vue.prototype.$vueSocketIoNamespaces = [
+                    ...Vue.prototype.$vueSocketIoNamespaces,
+                    namespace,
+                ];
             } else {
                 Vue.prototype.$socket = {
                     [namespace]: this.io,
@@ -44,6 +44,7 @@ export default class VueSocketIO {
                 Vue.prototype.$vueSocketIo = {
                     [namespace]: this,
                 };
+                Vue.prototype.$vueSocketIoNamespaces = [namespace];
             }
         } else {
             Vue.prototype.$socket = this.io;
@@ -53,7 +54,6 @@ export default class VueSocketIO {
         Vue.mixin(Mixin);
 
         Logger.info('Vue-Socket.io plugin enabled');
-
     }
 
 
@@ -63,25 +63,15 @@ export default class VueSocketIO {
      * @param options
      */
     connect(connection, options){
-
-        if(connection && typeof connection === 'object'){
-
+        if (connection && typeof connection === 'object'){
             Logger.info('Received socket.io-client instance');
 
             return connection;
-
-        } else if(typeof connection === 'string'){
-
-            Logger.info('Received connection string');
-
-            return this.io = SocketIO(connection, options);
-
-        } else {
-
-            throw new Error('Unsupported connection type');
-
         }
-
+        if (typeof connection === 'string'){
+            Logger.info('Received connection string');
+            return this.io = SocketIO(connection, options);
+        }
+        throw new Error('Unsupported connection type');
     }
-
 }
