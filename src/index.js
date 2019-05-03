@@ -33,18 +33,19 @@ export default class VueSocketIO {
         if (this.useConnectionNamespace) {
             const namespace = this.connectionNamespace || this.io.nsp.replace('/', '');
             if (typeof Vue.prototype.$socket === 'object') {
-                this.io = {
+                Vue.prototype.$socket = {
                     ...Vue.prototype.$socket,
                     [namespace]: this.io,
                 };
             } else {
-                this.io = {
+                Vue.prototype.$socket = {
                     [namespace]: this.io,
                 };
             }
+        } else {
+            Vue.prototype.$socket = this.io;
         }
 
-        Vue.prototype.$socket = this.io;
         Vue.prototype.$vueSocketIo = this;
         Vue.mixin(Mixin);
 
