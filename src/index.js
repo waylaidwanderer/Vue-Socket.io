@@ -32,21 +32,35 @@ export default class VueSocketIO {
 
         if (this.useConnectionNamespace) {
             const namespace = this.connectionNamespace || this.io.nsp.replace('/', '');
+            this.namespace = namespace;
             if (typeof Vue.prototype.$socket === 'object') {
                 Vue.prototype.$socket = {
                     ...Vue.prototype.$socket,
                     [namespace]: this.io,
                 };
+                Vue.prototype.$vueSocketIo = {
+                    ...this,
+                    [namespace]: this,
+                };
+                Vue.prototype.$vueSocketIoNamespaces = [
+                    ...Vue.prototype.$vueSocketIoNamespaces,
+                    namespace,
+                ];
             } else {
                 Vue.prototype.$socket = {
                     [namespace]: this.io,
                 };
+                Vue.prototype.$vueSocketIo = {
+                    [namespace]: this,
+                };
+                Vue.prototype.$vueSocketIoNamespaces = [namespace];
             }
         } else {
             Vue.prototype.$socket = this.io;
+            Vue.prototype.$vueSocketIo = this;
+            Vue.prototype.$vueSocketIoNamespaces = [];
         }
 
-        Vue.prototype.$vueSocketIo = this;
         Vue.mixin(Mixin);
 
         Logger.info('Vue-Socket.io plugin enabled');

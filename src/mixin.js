@@ -8,11 +8,19 @@ export default {
         if(!this.sockets) this.sockets = {};
 
         this.sockets.subscribe = (event, callback) => {
-            this.$vueSocketIo.emitter.addListener(event, callback, this);
+            if (this.$vueSocketIo.namespace) {
+                this.$vueSocketIo[this.$vueSocketIo.namespace].emitter.addListener(event, callback, this);
+            } else {
+                this.$vueSocketIo.emitter.addListener(event, callback, this);
+            }
         };
 
         this.sockets.unsubscribe = (event) => {
-            this.$vueSocketIo.emitter.removeListener(event, this);
+            if (this.$vueSocketIo.namespace) {
+                this.$vueSocketIo[this.$vueSocketIo.namespace].emitter.removeListener(event, this);
+            } else {
+                this.$vueSocketIo.emitter.removeListener(event, this);
+            }
         };
 
     },
@@ -27,7 +35,13 @@ export default {
             Object.keys(this.$options.sockets).forEach(event => {
 
                 if(event !== 'subscribe' && event !== 'unsubscribe') {
-                    this.$vueSocketIo.emitter.addListener(event, this.$options.sockets[event], this);
+
+                    if (this.$vueSocketIo.namespace) {
+                        this.$vueSocketIo[this.$vueSocketIo.namespace].emitter.addListener(event, this.$options.sockets[event], this);
+                    } else {
+                        this.$vueSocketIo.emitter.addListener(event, this.$options.sockets[event], this);
+                    }
+
                 }
 
             });
@@ -45,7 +59,11 @@ export default {
 
             Object.keys(this.$options.sockets).forEach(event => {
 
-                this.$vueSocketIo.emitter.removeListener(event, this);
+                if (this.$vueSocketIo.namespace) {
+                    this.$vueSocketIo[this.$vueSocketIo.namespace].emitter.removeListener(event, this);
+                } else {
+                    this.$vueSocketIo.emitter.removeListener(event, this);
+                }
 
             });
 
