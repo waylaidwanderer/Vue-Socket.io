@@ -9,7 +9,7 @@ export default {
             namespace: null,
         }];
 
-        if (this.$vueSocketIoNamespaces) {
+        if (this.$vueSocketIoNamespaces.length > 0) {
             this.$vueSocketIoNamespaces.forEach(namespace => objectsToCreate.push({
                 name: `sockets_${namespace}`,
                 namespace,
@@ -46,7 +46,7 @@ export default {
             namespace: null,
         }];
 
-        if (this.$vueSocketIoNamespaces) {
+        if (this.$vueSocketIoNamespaces.length > 0) {
             this.$vueSocketIoNamespaces.forEach(namespace => socketObjects.push({
                 name: `sockets_${namespace}`,
                 namespace,
@@ -79,7 +79,7 @@ export default {
             namespace: null,
         }];
 
-        if (this.$vueSocketIoNamespaces) {
+        if (this.$vueSocketIoNamespaces.length > 0) {
             this.$vueSocketIoNamespaces.forEach(namespace => socketObjects.push({
                 name: `sockets_${namespace}`,
                 namespace,

@@ -33,10 +33,7 @@ export default class VueSocketIO {
             if (typeof Vue.prototype.$socket === 'object') {
                 Vue.prototype.$socket[namespace] = this.io;
                 Vue.prototype.$vueSocketIo[namespace] = this;
-                Vue.prototype.$vueSocketIoNamespaces = [
-                    ...Vue.prototype.$vueSocketIoNamespaces,
-                    namespace,
-                ];
+                Vue.prototype.$vueSocketIoNamespaces.push(namespace);
             } else {
                 Vue.prototype.$socket = {
                     [namespace]: this.io,
@@ -49,6 +46,7 @@ export default class VueSocketIO {
         } else {
             Vue.prototype.$socket = this.io;
             Vue.prototype.$vueSocketIo = this;
+            Vue.prototype.$vueSocketIoNamespaces = [];
         }
 
         Vue.mixin(Mixin);
