@@ -53,18 +53,18 @@ export default {
             }))
         }
 
-        socketObjects.forEach(({ object, namespace }) => {
-            if (!this.$options[object]) {
+        socketObjects.forEach(({ name, namespace }) => {
+            if (!this.$options[name]) {
                 return;
             }
-            Object.keys(this.$options[object]).forEach(event => {
+            Object.keys(this.$options[name]).forEach(event => {
                 if (event === 'subscribe' || event === 'unsubscribe') {
                     return;
                 }
                 if (namespace) {
-                    this.$vueSocketIo[namespace].emitter.addListener(event, this.$options[object][event], this);
+                    this.$vueSocketIo[namespace].emitter.addListener(event, this.$options[name][event], this);
                 } else {
-                    this.$vueSocketIo.emitter.addListener(event, this.$options[object][event], this);
+                    this.$vueSocketIo.emitter.addListener(event, this.$options[name][event], this);
                 }
             });
         });
@@ -86,11 +86,11 @@ export default {
             }))
         }
 
-        socketObjects.forEach(({ object, namespace }) => {
-            if (!this.$options[object]) {
+        socketObjects.forEach(({ name, namespace }) => {
+            if (!this.$options[name]) {
                 return;
             }
-            Object.keys(this.$options[object]).forEach(event => {
+            Object.keys(this.$options[name]).forEach(event => {
                 if (namespace) {
                     this.$vueSocketIo[namespace].emitter.removeListener(event, this);
                 } else {
